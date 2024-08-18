@@ -1,23 +1,26 @@
 Vagrant.configure("2") do |config|
-    config.vm.define "ansible" do |ansible|
-      ansible.vm.box = ANSIBLE_CONTROLLER_BOX
-      ansible.vm.network "private_network", ip: "192.168.33.10"
-      ansible.vm.hostname = "ansible"
-      ansible.vm.provider "virtualbox" do |v|
-        v.name = "ansible"
+    config.vm.define "master" do |master|
+      master.vm.box = VAGRANT_BOX
+      master.vm.network "private_network", ip: "192.168.33.10"
+      master.vm.synced_folder "D:/gitrepos/Ansible", "/root/tmp",
+        owner: "root", group: "root"
+      # master.vm.synced_folder "D:/gitrepos/Ansible", "/home/vagrant",
+      #   owner: "vagrant", group: "vagrant"
+      master.vm.hostname = "master"
+      master.vm.provider "virtualbox" do |v|
+        v.name = "master"
         v.memory = 1024
         v.cpus = 1
       end
-      ansible.vm.provision "shell", inline: <<-SHELL
-        sudo apt update && sudo apt install -y git python3-pip
-      SHELL
+      # master.vm.provision "shell", inline: <<-SHELL
+      #   sudo apt update 
+      # SHELL
     end
     
-    ANSIBLE_CONTROLLER_BOX= "bento/debian-11"
-    VAGRANT_BOX = "bento/debian-11"
-    NODECOUNT = 2
-    NODE_MEMORY = 2048
-    NODE_CPU = 2
+    VAGRANT_BOX = "bento/ubuntu-22.04"
+    NODECOUNT = 1
+    NODE_MEMORY = 1024
+    NODE_CPU = 1
 
     (1..NODECOUNT).each do |i|
       config.vm.define "node#{i}" do |node|
@@ -41,4 +44,3 @@ Vagrant.configure("2") do |config|
     end
   
   end
-  
